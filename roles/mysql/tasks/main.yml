@@ -1,0 +1,6 @@
+---
+# thanks to https://stackoverflow.com/questions/26597926/install-mysql-with-ansible-on-ubuntu
+
+- include: install.yml
+- include: configure.yml
+- include: backup.yml

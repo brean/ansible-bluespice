@@ -1,0 +1,36 @@
+---
+
+- name: Create a new database with name 'mediawiki'
+  mysql_db:
+    name: "{{ mysql.database }}"
+    state: present
+
+- name: update mysql root password for all root accounts
+  become: root
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ mysql.root_pw }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
+  with_items:
+    - "{{ ansible_hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+
+- name: add other mysql accounts
+  become: root
+  mysql_user:
+    name: "{{ mysql.user }}"
+    host: "{{ item }}"
+    password: "{{ mysql.user_pw }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
+  with_items:
+    - "{{ ansible_hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+  notify:
+   - Restart MySQL

@@ -1,0 +1,10 @@
+---
+
+- name: Ensure solr group exists.
+  group: "name={{ solr.group }} state=present"
+
+- name: Ensure solr user exists.
+  user:
+    name: "{{ solr.user }}"
+    state: present
+    group: "{{ solr.user }}"

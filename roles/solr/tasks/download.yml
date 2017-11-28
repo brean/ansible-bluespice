@@ -1,0 +1,19 @@
+---
+- name: check if solr has already been downloaded
+  local_action: stat path="{{ solr.workspace }}/{{ solr.filename }}.tgz"
+  register: solr_download_path_status
+
+- name: Download Solr.
+  get_url:
+    url: "{{ solr.mirror }}/lucene/solr/{{ solr.version }}/{{ solr.filename }}.tgz"
+    dest: "{{ solr.workspace }}/{{ solr.filename }}.tgz"
+    force: no
+  when: solr_download_path_status.stat.exists == False
+  register: solr_download_status
+
+- name: Expand Solr.
+  unarchive:
+    src: "{{ solr.workspace }}/{{ solr.filename }}.tgz"
+    dest: "{{ solr.workspace }}"
+    copy: no
+  when: solr_download_status.changed

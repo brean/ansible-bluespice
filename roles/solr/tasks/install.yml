@@ -1,0 +1,41 @@
+---
+
+- name: Ensure dependencies are installed.
+  package: name={{ item }} state=present
+  with_items:
+    - lsof
+    - acl
+    - sudo
+
+- name: Run Solr installation script.
+  shell: >
+    {{ solr.workspace }}/{{ solr.filename }}/bin/install_solr_service.sh
+    {{ solr.workspace }}/{{ solr.filename }}.tgz
+    -i {{ solr.install_dir }}
+    -d {{ solr.home }}
+    -u {{ solr.user }}
+    -s {{ solr.service_name }}
+    -p {{ solr.port }}
+    creates={{ solr.install_path }}/bin/solr
+  register: solr_install_script_result
+
+# Workaround for bug https://github.com/ansible/ansible-modules-core/issues/915.
+- name: Ensure solr is stopped (RHEL 7 workaround).
+  service:
+    name: "{{ solr.service_name }}"
+    state: stopped
+  when: >
+    (ansible_os_family == 'RedHat')
+    and (ansible_distribution_version.split(".")[0] == '7')
+    and (solr_install_script_result.changed)
+  failed_when: false
+
+# commented out - systemd is not recognized as valid command by ansible for ubuntu
+#- name: Run systemd daemon_reload (RHEL 7 workaround).
+#  systemd:
+#    name: solr
+#    daemon_reload: yes
+#  when: >
+#    (ansible_os_family == 'RedHat')
+#    and (ansible_distribution_version.split(".")[0] == '7')
+#    and (solr_install_script_result.changed)

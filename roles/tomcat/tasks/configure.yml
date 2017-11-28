@@ -1,0 +1,21 @@
+- name: Copy tomcat-users.xml
+  template: src=tomcat-users.xml.j2
+    dest=/etc/{{ tomcat.version }}/tomcat-users.xml
+  register: tomcat_install_status
+
+- name: Reconfigure Tomcat port
+  lineinfile: dest=/etc/tomcat7/server.xml
+    line='    <Connector port="{{ tomcat.port }}" protocol="HTTP/1.1"'
+    regexp='^    <Connector port="8080" protocol="HTTP/1.1"'
+  register: tomcat_install_status
+
+- name: Configure Tomcat XMX memory
+  lineinfile: dest=/etc/default/tomcat7
+    line='JAVA_OPTS="-Djava.awt.headless=true -Xmx{{ tomcat.xmxmemory }} -XX:+UseConcMarkSweepGC"'
+    regexp='^JAVA_OPTS="-Djava.awt.headless=true -Xmx'
+  register: tomcat_install_status
+
+- name: Restart Tomcat
+  command: /bin/true
+  notify: Restart Tomcat
+  when: tomcat_install_status.changed

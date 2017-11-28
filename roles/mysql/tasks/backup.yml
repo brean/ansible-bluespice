@@ -1,0 +1,18 @@
+---
+
+- name: insert mysql wiki backup
+  local_action: stat path="./backup/backup.sql"
+  register: backup_result
+
+- name: copy backup to server
+  copy:
+    src: "./backup/backup.sql"
+    dest: "/tmp/_backup.sql"
+  when: backup_result.stat.exists == True
+
+- name: Restore database
+  mysql_db:
+    name: "{{ mysql.database }}"
+    state: import
+    target: /tmp/_backup.sql
+  when: backup_result.stat.exists == True

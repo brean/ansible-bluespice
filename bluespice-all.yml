@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: root
+  roles:
+    - base
+    - apache2
+    - mysql
+    - tomcat
+    - solr
+    - mediawiki
+  vars_files:
+    - variables.yml

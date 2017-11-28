@@ -1,0 +1,7 @@
+---
+
+- name: restart solr
+  service:
+    name: "{{ solr.service_name }}"
+    state: restarted
+    sleep: 5

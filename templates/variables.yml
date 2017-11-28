@@ -1,0 +1,41 @@
+---
+server:
+  root_directory: /var/www/html
+
+mysql:
+  root_pw: MYSQL_ROOT_PW
+  user: wikiuser
+  user_pw: MYSQL_USER_PW
+  database: mediawiki
+
+mediawiki:
+  version: 1.29
+  full_version: 1.29.0
+
+bluespice:
+  version: 2.27.2
+
+tomcat:
+  version: tomcat7
+  port: 8080
+  xmxmemory: 1024m
+  user: tomcat7
+  catalina_home: /var/lib/tomcat7
+
+solr:
+  user: solr
+  group: solr
+  service_name: solr
+  mirror: https://archive.apache.org/dist
+  install_dir: /opt
+  install_path: "/opt/solr"
+  home: "/var/solr"
+  connect_host: localhost
+  port: "8983"
+  version: 7.1.0
+  xms: "256M"
+  xmx: "512M"
+  timezone: "UTC"
+  workspace: /opt
+  config_file: "/etc/default/solr.in.sh"
+  filename: "solr-7.1.0"
