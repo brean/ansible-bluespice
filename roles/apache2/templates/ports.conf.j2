@@ -1,0 +1,11 @@
+Listen {{ apache.port }}
+
+<IfModule ssl_module>
+        Listen {{ apache.ssl_port }}
+</IfModule>
+
+<IfModule mod_gnutls.c>
+        Listen {{ apache.ssl_port }}
+</IfModule>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet

@@ -4,20 +4,22 @@
   local_action: stat path="/tmp/BlueSpice-free-{{ bluespice.version }}-installer.zip"
   register: bluespice_result
 
-- name: download mediawiki-bluespice from sourceforge
-  get_url: url=http://ncu.dl.sourceforge.net/project/bluespice/BlueSpice-free-{{ bluespice.version }}-installer.zip
-    dest=/tmp
-  when: bluespice_result.stat.exists == False
-
-- name: Creates directory
+- name: Create {{ apache.root_directory }} directory
   file:
-    path: /var/www/html
+    path: "{{ apache.root_directory }}"
     state: directory
     owner: www-data
     group: www-data
     mode: 0775
 
+- name: download mediawiki-bluespice from sourceforge
+  get_url: url=http://ncu.dl.sourceforge.net/project/bluespice/BlueSpice-free-{{ bluespice.version }}-installer.zip
+    dest=/tmp
+  when: bluespice_result.stat.exists == False
+  register: bluespice_download_status
+
 - name: Unarchive MediaWiki
   unarchive: src=/tmp/BlueSpice-free-{{ bluespice.version }}-installer.zip
-    dest={{ server.root_directory }}
+    dest={{ apache.root_directory }}
     copy=no
+  when: bluespice_download_status.changed

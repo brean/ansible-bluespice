@@ -1,6 +1,13 @@
 ---
-server:
+nginx:
+  port: 80
+  servername: localhost
+
+apache:
   root_directory: /var/www/html
+  port: 3000
+  ssl_port: 3443
+  admin: webmaster@localhost
 
 mysql:
   root_pw: MYSQL_ROOT_PW
@@ -39,3 +46,5 @@ solr:
   workspace: /opt
   config_file: "/etc/default/solr.in.sh"
   filename: "solr-7.1.0"
+  cores:
+  - collection1

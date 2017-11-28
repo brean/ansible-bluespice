@@ -1,0 +1,20 @@
+---
+
+# downloading solr takes some time, disable deleting it saves some time if run again
+#- name: Remove the downloaded Solr archive.
+#  file:
+#    path: "{{ item }}"
+#    state: absent
+#  with_items:
+#    - "{{ solr.workspace }}/{{ solr.filename }}.tgz"
+#    - "{{ solr.workspace }}/{{ solr.filename }}"
+
+- name: Remove docs, if not needed.
+  file:
+    path: "{{ solr.install_path }}/docs"
+    state: absent
+
+- name: Remove example dir, if not needed.
+  file:
+    path: "{{ solr.install_path }}/example"
+    state: absent

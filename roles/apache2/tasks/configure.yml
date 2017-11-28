@@ -1,0 +1,27 @@
+---
+
+# Reconfigure to free port 80 - that is reserved for nginx
+- name: check if default config exists for apache2
+  local_action: stat path="/etc/apache2/sites-enabled/000-default.conf"
+  register: apache_result
+
+- name: Create sites-disabled directory
+  file:
+    state: directory
+    path: /etc/apache2/sites-disabled
+
+- name: Move default file to sites-disabled
+  command: mv /etc/apache2/sites-enabled/000-default.conf /etc/apache2/sites-disabled/000-default.conf
+  when: apache_result.stat.exists
+
+- name: create new config for apache2
+  template: src=mediawiki.conf.j2
+    dest=/etc/apache2/sites-enabled/000-mediawiki.conf
+  notify:
+  - Restart Apache2
+
+- name: create new config for apache2
+  template: src=ports.conf.j2
+    dest=/etc/apache2/ports.conf
+  notify:
+  - Restart Apache2

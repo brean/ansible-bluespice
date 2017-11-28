@@ -3,3 +3,6 @@
 - include: user.yml
 - include: download.yml
 - include: install.yml
+- include: configure.yml
+- include: cores.yml
+- include: trim-fat.yml

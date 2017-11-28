@@ -8,5 +8,6 @@
     - tomcat
     - solr
     - mediawiki
+    - nginx
   vars_files:
     - variables.yml
