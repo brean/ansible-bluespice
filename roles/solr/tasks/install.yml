@@ -7,6 +7,8 @@
     - acl
     - sudo
 
+#/etc/init.d/solr
+
 - name: Run Solr installation script.
   shell: >
     {{ solr.workspace }}/{{ solr.filename }}/bin/install_solr_service.sh
@@ -18,7 +20,7 @@
     -p {{ solr.port }}
     creates={{ solr.install_path }}/bin/solr
   register: solr_install_script_result
-  
+
 
 # Workaround for bug https://github.com/ansible/ansible-modules-core/issues/915.
 - name: Ensure solr is stopped (RHEL 7 workaround).

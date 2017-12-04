@@ -1,31 +1,39 @@
+---
+
 - name: create LocalSettings.php
-  template: src=LocalSettings.php.j2
-    dest={{ apache.root_directory }}/LocalSettings.php
+  template:
+    src: LocalSettings.php.j2
+    dest: "{{ apache.root_directory }}/LocalSettings.php"
 
 - name: create BlueSpiceExtensions.local.php
-  template: src=BlueSpiceExtensions.local.php.j2
-    dest={{ apache.root_directory }}/extensions/BlueSpiceExtensions/BlueSpiceExtensions.local.php
+  template:
+    src: BlueSpiceExtensions.local.php.j2
+    dest: "{{ apache.root_directory }}/extensions/BlueSpiceExtensions/BlueSpiceExtensions.local.php"
 
 - name: Set permissions on upload directory
-  file: path={{ apache.root_directory }}/images
-    owner=www-data
-    group=root
-    mode=0755
+  file:
+    path: "{{ apache.root_directory }}/images"
+    owner: www-data
+    group: root
+    mode: 0755
 
 - name: run update maintaince script
   command: "/usr/bin/php {{ apache.root_directory }}/maintenance/update.php"
-    chdir={{ apache.root_directory }}/maintenance
+  args:
+    chdir: "{{ apache.root_directory }}/maintenance"
 
 # see https://en.help.bluespice.com/wiki/Setup:Installation_Manual/Webservices/Extended_Search
 - name: run solr search update
   command: "/usr/bin/php {{ apache.root_directory }}/extensions/BlueSpiceExtensions/ExtendedSearch/maintenance/searchUpdate.php"
-    chdir={{ apache.root_directory }}/maintenance
+  args:
+    chdir: "{{ apache.root_directory }}/maintenance"
 
 # create cronjob to run every 15 minutes
 # see https://en.help.bluespice.com/wiki/Setup:Installation_Manual/Optimization/Cronjobs
-- cron:
-  name: create cronjob for php maintainance
-  minute: "0,15,30,45"
-  user: root
-  job: "/usr/bin/php {{ apache.root_directory }}/maintenance/runJobs.php"
-  cron_file: bluespice_maintainance
+- name: create cronjob for BlueSpice maintainance
+  cron:
+    name: BlueSpice Maintaince
+    minute: "0,15,30,45"
+    user: root
+    job: "/usr/bin/php {{ apache.root_directory }}/maintenance/runJobs.php"
+    cron_file: bluespice_maintainance
