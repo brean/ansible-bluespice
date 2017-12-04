@@ -1,0 +1,17 @@
+---
+
+- name: check if mediawiki-bluespice has already been downloaded
+  local_action: stat path="/tmp/BlueSpice-free-{{ bluespice.version }}-installer.zip"
+  register: bluespice_zip_result
+
+- name: download BlueSpice free (including MediaWiki) from sourceforge
+  get_url: url=https://sourceforge.net/projects/bluespice/files/BlueSpice-free-{{ bluespice.version }}-installer.zip/download
+    dest=/tmp
+  when: bluespice_zip_result.stat.exists == False
+  register: bluespice_download_status
+
+- name: Unarchive BlueSpice
+  unarchive:
+    src: "/tmp/BlueSpice-free-{{ bluespice.version }}-installer.zip"
+    dest: "/tmp"
+    copy: no

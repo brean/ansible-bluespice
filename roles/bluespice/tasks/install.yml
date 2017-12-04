@@ -1,0 +1,57 @@
+- name: check, if there already is a bluespice-installation
+  local_action: stat path={{ apache.root_directory }}"
+  register: bluespice_old_result
+
+- name: Make sure backup folder {{ apache.backup_directory }} exists
+  file:
+    path: "{{ apache.backup_directory }}"
+    state: directory
+
+- name: create Backup of old bluespice-installation
+  command: mv {{ apache.root_directory }} {{ apache.backup_directory }}/{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}
+  when: bluespice_old_result.stat.exists
+
+# WARNING! THIS DELETES YOUR BlueSpice-INSTALLATION!
+- name: Make sure folder {{ apache.root_directory }} has been deleted
+  file:
+    path: "{{ apache.root_directory }}"
+    state: absent
+
+- name: move bluespice to apache root
+  command: mv /tmp/bluespice-free-installer {{ apache.root_directory }}
+#  when: bluespice_download_status.changed
+
+- name: Rename data and config from extensions/BlueSpiceFoundation
+  command: mv {{ apache.root_directory }}/{{item}}.template {{ apache.root_directory }}/{{item}}
+  with_items:
+    - extensions/BlueSpiceFoundation/data
+    - extensions/BlueSpiceFoundation/config
+
+- name: check if images backup exists
+  local_action: stat path="./backup/images"
+  register: backup_result
+
+- name: Make sure folder {{ apache.root_directory }}/images does not exist (will be overwritten by backup)
+  file:
+    path: "{{ apache.root_directory }}/images"
+    state: absent
+  when: backup_result.stat.exists == True
+
+- name: copy backup to server
+  copy:
+    src: "./backup/images"
+    dest: "{{ apache.root_directory }}/images"
+  when: backup_result.stat.exists == True
+
+- name: Make sure mode settings for {{ apache.root_directory }} directory is right
+  file:
+    path: "{{ apache.root_directory }}"
+    state: directory
+    mode: 0755
+
+- name: Make sure user settings for {{ apache.root_directory }} and its sub directories are right
+  file:
+    path: "{{ apache.root_directory }}"
+    owner: www-data
+    group: www-data
+    recurse: True

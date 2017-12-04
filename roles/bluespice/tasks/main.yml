@@ -2,3 +2,4 @@
 
 - include: download.yml
 - include: install.yml
+- include: configure.yml

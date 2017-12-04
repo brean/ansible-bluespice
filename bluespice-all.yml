@@ -4,10 +4,11 @@
   roles:
     - base
     - apache2
+    - php
     - mysql
     - tomcat
     - solr
-    - mediawiki
+    - bluespice
     - nginx
   vars_files:
     - variables.yml

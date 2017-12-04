@@ -4,7 +4,8 @@ nginx:
   servername: localhost
 
 apache:
-  root_directory: /var/www/html
+  root_directory: /var/www/bluespice
+  backup_directory: /opt/backups
   port: 3000
   ssl_port: 3443
   admin: webmaster@localhost
@@ -14,6 +15,7 @@ mysql:
   user: wikiuser
   user_pw: MYSQL_USER_PW
   database: mediawiki
+  host: localhost
 
 mediawiki:
   version: 1.29

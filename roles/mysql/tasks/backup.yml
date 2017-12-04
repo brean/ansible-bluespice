@@ -1,6 +1,6 @@
 ---
 
-- name: insert mysql wiki backup
+- name: check if mysql backup exists
   local_action: stat path="./backup/backup.sql"
   register: backup_result
 
@@ -16,3 +16,15 @@
     state: import
     target: /tmp/_backup.sql
   when: backup_result.stat.exists == True
+
+- name: repair database index
+  command: >
+    mysql --user={{ mysql.user }} --password={{ mysql.user_pw }} {{ mysql.database }}
+    --host={{ mysql.host }} --batch --skip-column-names
+    --execute="REPAIR TABLE {{ mysql.database }}.searchindex"
+
+- name: truncate messages
+  command: >
+    mysql --user={{ mysql.user }} --password={{ mysql.user_pw }} {{ mysql.database }}
+    --host={{ mysql.host }} --batch --skip-column-names
+    --execute=TRUNCATE TABLE `msg_resource`; TRUNCATE TABLE `msg_resource_links`;"
