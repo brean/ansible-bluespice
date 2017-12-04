@@ -1,3 +1,4 @@
 /variables.yml
 backup/backup.sql
 backup/images
+ansible_log.log
