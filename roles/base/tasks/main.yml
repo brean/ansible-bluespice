@@ -17,3 +17,4 @@
     - unzip
     - ssh
     - tree
+    - ack-grep
